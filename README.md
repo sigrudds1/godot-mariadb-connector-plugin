@@ -46,9 +46,9 @@ You can find the demo inside the `demo/` folder, which demonstrates how to:
 Unlike many other database connectors, this plugin is licensed under **MIT**, not **GPL**. Although **MariaDB itself is GPL**, this connector **only communicates with MariaDB servers via standard network protocols**—meaning it does **not** fall under GPL’s derivative work restrictions. This ensures **no licensing conflicts** when using this plugin in **closed-source** or **commercial** Godot projects.
 
 ## Support
-Join my [Discord Server](https://discord.gg/jJe2eFfjGd) for help and feedback.
+Join my [Discord Server](https://discord.gg/jJe2eFfjGd) for help and feedback, it's the best way to get a hold of me as I am not always on github if my work load is heavy.
 
-For issues, open a ticket on [GitHub Issues](https://github.com/sigrudds1/Godot-MariaDB-Connector-Plugin/issues).
+For issues, open a ticket on [GitHub Issues](https://github.com/sigrudds1/Godot-MariaDB-Connector-Plugin/issues) and ping me on Discord.
 
 ## Contributing
 
