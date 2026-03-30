@@ -56,7 +56,8 @@ func _ready() -> void:
 	#context_connection()
 	#instantiated_connection()
 	#test_prepared_select()
-	test_prepared_cmd()
+	#test_prepared_cmd()
+	test_varbinary()
 	
 
 
@@ -65,7 +66,6 @@ func _exit_tree() -> void:
 		db.disconnect_db()
 
 func test_doc_paste() -> void:
-
 	pass
 
 func test_prepared_select() -> void:
@@ -146,6 +146,32 @@ func test_prepared_cmd() -> void:
 	
 	
 	print()
+
+
+func test_varbinary() -> void:
+	var ctx := MariaDBConnectContext.new()
+	ctx.hostname = ed["db_hostname"] as String
+	ctx.port = ed["db_port"]
+	ctx.db_name = ed["db_name"] as String
+	ctx.username = ed["db_ed_user"] as String
+	ctx.password = ed["db_sha512_hashed_pwd_b64"] as String
+	# You can now store passwords as base64
+	ctx.encoding = MariaDBConnectContext.ENCODE_BASE64 # Default, for exmaple only
+	#ctx.password = ed["db_sha512_hashed_pwd"] as String
+	#ctx.encoding = MariaDBConnectionContext.ENCODE_HEX
+	ctx.auth_type = MariaDBConnectContext.AUTH_TYPE_ED25519 # Default, for exmaple only
+	var ctx_db := MariaDBConnector.new()
+	var err: MariaDBConnector.ErrorCode = ctx_db.connect_db_ctx(ctx)
+	if err != MariaDBConnector.ErrorCode.OK:
+		push_error(err)
+		return
+	
+	var stmt: String = "SELECT * FROM `varbinary`;" 
+	var rows: Array[Dictionary] = ctx_db.select_query(stmt)
+	if ctx_db.last_error == MariaDBConnector.ErrorCode.OK:
+		print("rows:", rows)
+	else:
+		printerr("Error %d on select" % [ctx_db.last_error])
 
 
 func context_connection() -> void:
