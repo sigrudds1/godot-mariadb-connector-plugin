@@ -47,7 +47,7 @@
 using namespace godot;
 
 constexpr uint8_t kCharacterCollationId = 33;  //utf8_general_ci
-constexpr char *kCharacterCollationName = (char *)"utf8_general_ci";
+constexpr char* kCharacterCollationName = (char*)"utf8_general_ci";
 
 class MariaDBConnector : public RefCounted {
 	GDCLASS(MariaDBConnector, RefCounted);
@@ -189,7 +189,7 @@ private:
 	PackedByteArray _dbname;
 
 	Ref<StreamPeerTCP> _stream;
-	Mutex *_stream_mutex = nullptr;
+	Mutex* _stream_mutex = nullptr;
 	String _ip;
 	int _port = 0;
 	uint32_t _server_timout_msec = 1000;
@@ -215,35 +215,35 @@ private:
 	 * \param stream	std::vector<uint8_t> the stream to be modified.
 	 * \param sequance	int
 	 */
-	void _add_packet_header(PackedByteArray &p_pkt, uint8_t p_pkt_seq);
+	void _add_packet_header(PackedByteArray& p_pkt, uint8_t p_pkt_seq);
 
 	// void m_append_thread_data(PackedByteArray &p_data, const uint64_t p_timeout = 1000);
 	// void m_tcp_thread_func();
 
 	ErrorCode _client_protocol_v41(const AuthType p_srvr_auth_type, const PackedByteArray p_srvr_salt);
 	ErrorCode _connect();
-	PackedByteArray _get_pkt_bytes_adv_idx(const PackedByteArray &src_buf, size_t &start_pos, const size_t byte_cnt);
+	PackedByteArray _get_pkt_bytes_adv_idx(const PackedByteArray& src_buf, size_t& start_pos, const size_t byte_cnt);
 	AuthType _get_server_auth_type(String p_srvr_auth_name);
-	Variant _get_type_data(const int p_db_field_type, const PackedByteArray p_data);
-	void _handle_server_error(const PackedByteArray p_src_buffer, size_t &p_last_pos);
+	Variant _get_type_data(const int p_db_field_type, const PackedByteArray& p_data, const int p_char_set);
+	void _handle_server_error(const PackedByteArray p_src_buffer, size_t& p_last_pos);
 	void _hash_password(String p_password);
-	TypedArray<Dictionary> _parse_prepared_exec(PackedByteArray &buf,
-			size_t &pkt_itr,
-			const TypedArray<Dictionary> &col_defs,
-			bool dep_eof);
-	TypedArray<Dictionary> _parse_string_rows(PackedByteArray &buf,
-			size_t &pkt_itr,
-			const TypedArray<Dictionary> &col_defs,
-			const bool dep_eof);
-	String _parse_null_utf8_at_adv_idx(PackedByteArray p_buf, size_t &p_start_pos);
+	TypedArray<Dictionary> _parse_prepared_exec(PackedByteArray& buf,
+												size_t& pkt_itr,
+												const TypedArray<Dictionary>& col_defs,
+												bool dep_eof);
+	TypedArray<Dictionary> _parse_string_rows(PackedByteArray& buf,
+											  size_t& pkt_itr,
+											  const TypedArray<Dictionary>& col_defs,
+											  const bool dep_eof);
+	String _parse_null_utf8_at_adv_idx(PackedByteArray p_buf, size_t& p_start_pos);
 	String _parse_null_utf8(PackedByteArray p_buf);
-	ErrorCode _prepared_params_send(const uint32_t stmt_id, const TypedArray<Dictionary> &params);
-	Variant _query(const String &sql_stmt, const bool is_command = false);
-	ErrorCode _rcv_bfr_chk(PackedByteArray &bfr, int &bfr_size, const size_t cur_pos, const size_t bytes_needed);
+	ErrorCode _prepared_params_send(const uint32_t stmt_id, const TypedArray<Dictionary>& params);
+	Variant _query(const String& sql_stmt, const bool is_command = false);
+	ErrorCode _rcv_bfr_chk(PackedByteArray& bfr, int& bfr_size, const size_t cur_pos, const size_t bytes_needed);
 	PackedByteArray _read_buffer(uint32_t timeout, uint32_t expected_bytes = 0);
-	TypedArray<Dictionary> _read_columns_data(PackedByteArray &srvr_response, size_t &pkt_itr, const uint16_t col_cnt);
+	TypedArray<Dictionary> _read_columns_data(PackedByteArray& srvr_response, size_t& pkt_itr, const uint16_t col_cnt);
 	//TODO(sigrudds1) Add error log file using the username in the filename
-	ErrorCode _server_init_handshake_v10(const PackedByteArray &p_src_buffer);
+	ErrorCode _server_init_handshake_v10(const PackedByteArray& p_src_buffer);
 	Variant _com_query_response(const bool p_is_command);
 	void _update_username(String P_username);
 
@@ -299,18 +299,18 @@ public:
 	 * \param is_pre_hash	bool if set the password used will be hashed by the required type before used.
 	 * \return 				uint32_t 0 = no error, see error enum class ErrorCode
 	 */
-	ErrorCode connect_db(const String &host,
-			const int port,
-			const String &dbname,
-			const String &username,
-			const String &password,
-			const AuthType auth_type = AuthType::AUTH_TYPE_ED25519,
-			bool is_prehashed = true);
+	ErrorCode connect_db(const String& host,
+						 const int port,
+						 const String& dbname,
+						 const String& username,
+						 const String& password,
+						 const AuthType auth_type = AuthType::AUTH_TYPE_ED25519,
+						 bool is_prehashed = true);
 
-	ErrorCode connect_db_ctx(const Ref<MariaDBConnectContext> &p_context);
+	ErrorCode connect_db_ctx(const Ref<MariaDBConnectContext>& p_context);
 	void disconnect_db();
-	Dictionary excecute_command(const String &sql_stmt);
-	static Ref<MariaDBConnector> connection_instance(const Ref<MariaDBConnectContext> &p_context);
+	Dictionary excecute_command(const String& sql_stmt);
+	static Ref<MariaDBConnector> connection_instance(const Ref<MariaDBConnectContext>& p_context);
 	ErrorCode get_last_error() const { return _last_error; }
 	PackedByteArray get_last_query_converted();
 	PackedByteArray get_last_response();
@@ -318,23 +318,23 @@ public:
 
 	// PackedByteArray get_caching_sha2_passwd_hash(PackedByteArray p_sha256_hashed_passwd, PackedByteArray
 	// p_srvr_salt);
-	PackedByteArray get_client_ed25519_signature(const PackedByteArray &p_sha512_hashed_passwd,
-			const PackedByteArray &p_svr_msg);
-	PackedByteArray get_mysql_native_password_hash(const PackedByteArray &p_sha1_hashed_passwd,
-			const PackedByteArray &p_srvr_salt);
+	PackedByteArray get_client_ed25519_signature(const PackedByteArray& p_sha512_hashed_passwd,
+												 const PackedByteArray& p_svr_msg);
+	PackedByteArray get_mysql_native_password_hash(const PackedByteArray& p_sha1_hashed_passwd,
+												   const PackedByteArray& p_srvr_salt);
 
 	bool is_connected_db();
 
-	Variant query(const String &sql_stmt) { return _query(sql_stmt); }
+	Variant query(const String& sql_stmt) { return _query(sql_stmt); }
 	void ping_srvr();
 	// Prepared statement section
-	Dictionary prepared_statement(const String &sql);
-	TypedArray<Dictionary> prepared_stmt_exec_select(uint32_t stmt_id, const TypedArray<Dictionary> &params);
+	Dictionary prepared_statement(const String& sql);
+	TypedArray<Dictionary> prepared_stmt_exec_select(uint32_t stmt_id, const TypedArray<Dictionary>& params);
 	// TypedArray<Dictionary> exec_prepped_select(uint32_t stmt_id, const Array &params);
-	Dictionary prepared_stmt_exec_cmd(uint32_t stmt_id, const TypedArray<Dictionary> &params);
+	Dictionary prepared_stmt_exec_cmd(uint32_t stmt_id, const TypedArray<Dictionary>& params);
 	ErrorCode prepared_statement_close(uint32_t stmt_id);
 
-	TypedArray<Dictionary> select_query(const String &sql_stmt);
+	TypedArray<Dictionary> select_query(const String& sql_stmt);
 
 	//TODO(sigrudds1) Implement SSL/TLS
 	//void tls_enable(bool enable);

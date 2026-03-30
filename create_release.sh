@@ -1,82 +1,40 @@
 #!/bin/bash
 
-# Check if a version argument is provided
 if [[ -z "$1" ]]; then
-    echo "❌ Error: No version number provided."
-    echo "Usage: $0 <version>"
-    exit 1
+	echo "❌ Error: No version number provided."
+	echo "Usage: $0 <version>"
+	exit 1
 fi
 
 VERSION="$1"
+OUTPUT_DIR="release_zips/$VERSION"
+ADDON_DIR="demo/addons/godot-mariadb-connector"
+ADDON_ZIP="$OUTPUT_DIR/addon.zip"
+DEMO_ZIP="$OUTPUT_DIR/demo.zip"
 
-# Step 1: Define expected tags
-PLATFORMS=("linux" "windows")
-ARCHS=("x86_64" "arm64")
-TARGETS=("debug" "release")
+if [[ ! -d "$ADDON_DIR" ]]; then
+	echo "❌ Error: Addon directory '$ADDON_DIR' does not exist."
+	exit 1
+fi
 
-# Define output folder
-OUTPUT_DIR="release_zips"
-LIBS_DIR="demo/libs"
+if [[ ! -d "demo" ]]; then
+	echo "❌ Error: Demo directory 'demo' does not exist."
+	exit 1
+fi
 
-# Ensure output directory exists
 mkdir -p "$OUTPUT_DIR"
 
-# Step 2: Check if any ZIP file already exists, exit immediately if true
-for PLATFORM in "${PLATFORMS[@]}"; do
-    for ARCH in "${ARCHS[@]}"; do
-        ZIP_NAME="${OUTPUT_DIR}/MariaDBConnector-${PLATFORM}-${ARCH}-v${VERSION}.zip"
-        if [[ -f "$ZIP_NAME" ]]; then
-            echo "❌ ERROR: ZIP file $ZIP_NAME already exists! Exiting to prevent overwrites."
-            exit 1
-        fi
-    done
-done
+if [[ -f "$ADDON_ZIP" || -f "$DEMO_ZIP" ]]; then
+	echo "❌ Error: ZIP(s) already exist in '$OUTPUT_DIR'. Remove them first if you want to rebuild."
+	exit 1
+fi
 
-echo "✅ No existing ZIPs found. Proceeding with packaging..."
+echo "📦 Creating addon.zip for Godot Asset Library..."
+zip -r "$ADDON_ZIP" "$ADDON_DIR"
 
-# Step 3: Iterate through libs folder and detect platform/arch/target from filenames
-for FILE in "$LIBS_DIR"/lib_mariadb_connector.*; do
-    [[ -e "$FILE" ]] || continue  # Skip if no matching files
+echo "📦 Creating demo.zip without addon folder..."
+zip -r "$DEMO_ZIP" "demo" -x "$ADDON_DIR/*"
 
-    # Extract filename
-    FILENAME=$(basename "$FILE")
-
-    DETECTED_PLATFORM=""
-    DETECTED_ARCH=""
-    DETECTED_TARGET=""
-
-    # Match platform, arch, and target based on filename
-    for PLATFORM in "${PLATFORMS[@]}"; do
-        [[ "$FILENAME" == *"$PLATFORM"* ]] && DETECTED_PLATFORM="$PLATFORM"
-    done
-
-    for ARCH in "${ARCHS[@]}"; do
-        [[ "$FILENAME" == *"$ARCH"* ]] && DETECTED_ARCH="$ARCH"
-    done
-
-    for TARGET in "${TARGETS[@]}"; do
-        [[ "$FILENAME" == *"$TARGET"* ]] && DETECTED_TARGET="$TARGET"
-    done
-
-    # Ensure all three components were detected
-    if [[ -z "$DETECTED_PLATFORM" || -z "$DETECTED_ARCH" || -z "$DETECTED_TARGET" ]]; then
-        echo "⚠️  Skipping unknown file: $FILENAME"
-        continue
-    fi
-
-    # Step 4: We have all 3 matches (Platform, Arch, Target)
-
-    # Step 5: Check if ZIP already exists
-    ZIP_NAME="${OUTPUT_DIR}/MariaDBConnector-${DETECTED_PLATFORM}-${DETECTED_ARCH}-v${VERSION}.zip"
-
-    if [[ ! -f "$ZIP_NAME" ]]; then
-        # If ZIP does not exist, create it while excluding all `libs/` files **except `.gdextension`**
-        echo "📦 Creating new ZIP: $ZIP_NAME"
-        zip -r "$ZIP_NAME" "demo/" -x "demo/libs/lib_mariadb_connector.*"
-    fi
-
-	zip -u "$ZIP_NAME" "$FILE" "$LIBS_DIR/$(basename "$FILE")"
-
-done
-
-echo "🎉 Release ZIPs successfully created in $OUTPUT_DIR/ for version v${VERSION}."
+echo "🎉 Release files created in '$OUTPUT_DIR':"
+echo "   - addon.zip"
+echo "   - demo.zip"
